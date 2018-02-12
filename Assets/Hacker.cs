@@ -7,6 +7,9 @@ public class Hacker : MonoBehaviour {
 	private string[] level3Password = {"renaissence", "calculus", "template", "algorithm", "artifical intelligence"};
 	
 	// Game state
+	private int mainMenuRepeatingTimes = 0;
+	private int passwordReatingTimes = 0;
+	private string _menuHint = "If you can't solve it, feel free to type 'menu' to go back to the main menu";
 	private int _level;
 	private enum Screen {
 		MainMenu,
@@ -30,20 +33,30 @@ public class Hacker : MonoBehaviour {
 	}
 
 	
-	void OnUserInput(string input)
-	{
+	void OnUserInput(string input) {
+		
 		if (input == "menu") {
 			ShowMainMenu();
+			mainMenuRepeatingTimes = 0;
+			passwordReatingTimes = 0;
 			_currentScreen = Screen.MainMenu;
 		}
 
-		else if (_currentScreen == Screen.MainMenu){
+		if (mainMenuRepeatingTimes == 2 || passwordReatingTimes == 2) {
+			Terminal.WriteLine(_menuHint);
+		}
+		else if (_currentScreen == Screen.MainMenu) {
+			mainMenuRepeatingTimes++;
+			passwordReatingTimes = 0;
 			RunMainMenu(input);
 		}
 
 		else if (_currentScreen == Screen.Password) {
 			CheckPassword(input);
+			passwordReatingTimes++;
+			mainMenuRepeatingTimes = 0;
 		}
+		
 	}
 	void RunMainMenu(string input) {
 		bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
@@ -98,6 +111,7 @@ public class Hacker : MonoBehaviour {
 		_currentScreen = Screen.Win;
 		Terminal.WriteLine("Congratulations! You successfully dicipher the code.");
 		ShowLevelReward();
+		Terminal.WriteLine(_menuHint);
 	}
 
 	private void ShowLevelReward() {
