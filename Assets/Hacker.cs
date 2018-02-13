@@ -41,26 +41,31 @@ public class Hacker : MonoBehaviour {
 			passwordReatingTimes = 0;
 			_currentScreen = Screen.MainMenu;
 		}
-
-		if (mainMenuRepeatingTimes == 2 || passwordReatingTimes == 2) {
-			Terminal.WriteLine(_menuHint);
+		else if (input == "close" || input == "quit" || input == "exit") {
+			Terminal.WriteLine("If you are on a web, close the web tab");
 		}
-		else if (_currentScreen == Screen.MainMenu) {
+
+		
+		if (_currentScreen == Screen.MainMenu) {
 			mainMenuRepeatingTimes++;
 			passwordReatingTimes = 0;
 			RunMainMenu(input);
 		}
 
 		else if (_currentScreen == Screen.Password) {
+			Terminal.ClearScreen();
 			CheckPassword(input);
 			passwordReatingTimes++;
 			mainMenuRepeatingTimes = 0;
 		}
-		
+		if ((mainMenuRepeatingTimes >= 3 || passwordReatingTimes >= 3) && _currentScreen!=Screen.Win) {
+        			Terminal.WriteLine(_menuHint);
+        		}
 	}
 	void RunMainMenu(string input) {
 		bool isValidLevelNumber = (input == "1" || input == "2" || input == "3");
 		if (isValidLevelNumber) {
+			Terminal.ClearScreen();
 			_level = int.Parse(input);
 			AskForPassword();
 		} else {
@@ -78,7 +83,6 @@ public class Hacker : MonoBehaviour {
 	void AskForPassword() {
 		print(level1Password.Length);
 		_currentScreen = Screen.Password;
-		Terminal.ClearScreen();
 		SetRandomPassword();
 		Terminal.WriteLine("Please enter your password hint : "+_password.Anagram());
 	}
@@ -111,7 +115,6 @@ public class Hacker : MonoBehaviour {
 		_currentScreen = Screen.Win;
 		Terminal.WriteLine("Congratulations! You successfully dicipher the code.");
 		ShowLevelReward();
-		Terminal.WriteLine(_menuHint);
 	}
 
 	private void ShowLevelReward() {
@@ -148,6 +151,7 @@ public class Hacker : MonoBehaviour {
 				Debug.LogError("Invalid level reached");
 				break;
 		}
+		Terminal.WriteLine("You can type 'menu' to choose a more diffcult level for challenge");
 	}
 
 	
